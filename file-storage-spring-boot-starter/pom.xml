@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>com.jqdi</groupId>
+		<artifactId>file-storage</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>file-storage-spring-boot-starter</artifactId>
+	<packaging>jar</packaging>
+
+	<description>spring-boot-starter代码</description>
+
+	<dependencies>
+		<!-- 工具依赖 -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+			<version>1.18.26</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- 工具依赖 -->
+		
+		<!-- spring-boot自动配置依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>2.0.5.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- spring-boot自动配置依赖 -->
+		
+		<!-- 文件存储依赖 -->
+		<dependency>
+			<groupId>com.jqdi</groupId>
+			<artifactId>file-storage-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- 文件存储依赖 -->
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>  
+			    <groupId>org.apache.maven.plugins</groupId>  
+			    <artifactId>maven-surefire-plugin</artifactId>  
+			    <configuration>  
+			        <skipTests>true</skipTests>  
+			    </configuration>  
+			</plugin> 
+	         
+	        <!--配置生成源码包-->
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-source-plugin</artifactId>
+	            <executions>
+	                <execution>
+	                    <id>attach-sources</id>
+	                    <goals>
+	                        <goal>jar</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
+	        </plugin>
+		</plugins>
+	</build>
+</project>

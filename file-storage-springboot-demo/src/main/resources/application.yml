@@ -1,0 +1,61 @@
+server:
+  port: 4001
+
+spring:
+  application:
+    name: springbootdemo
+    
+filestorage:
+  active: local
+  local:
+    endpoint: /home/data/oss
+    bucketName: buket-template
+    domain: http://18.163.115.207:8011 # 访问域名，可以结合spring.resources.static-locations静态资源来使用 或 使用nginx配置访问目录指向
+  minio:
+    endpoint: http://127.0.0.1:9000
+    accessKey: pRYo5fCm9ZyVNKLA
+    secretKey: Lv5yFUrBOXrNsZJVZ93XxSVl7JiNA99J
+    bucketName: buket-template
+    domain: http://192.168.28.158:9000 # 访问域名，例如：“https://image.d-domain.com”
+  alioss:
+    endpoint: oss-cn-shenzhen.aliyuncs.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template
+    domain: https://image.d-domain.com
+  tencentcos:
+    endpoint: ap-guangzhou.myqcloud.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template
+    domain: # 访问域名，未配置域名会默认使用oss的url
+  amazons3:
+    endpoint: xxx.aws.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template
+    domain: # 访问域名，未配置域名会默认使用oss的url
+  baidubos:
+    endpoint: xxx.baidu.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template
+    domain: # 访问域名，未配置域名会默认使用oss的url
+  huaweiobs:
+    endpoint: xxx.huawei.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template
+    domain: # 访问域名，未配置域名会默认使用oss的url
+  wangyinos:
+    endpoint: xxx.wangyi.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template-dev
+    domain: # 访问域名，未配置域名会默认使用oss的url
+  jingdongoss:
+    endpoint: xxx.jdcloud.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template-dev
+    domain: # 访问域名，未配置域名会默认使用oss的url
