@@ -61,14 +61,24 @@ filestorage:
     bucketName: buket-template
     domain: https://image.domain.com
 ```
-## 
-开源共建
+#### 4：在代码中使用
+```
+    @Autowired
+    private FileStorage fileStorage;
 
-### 开源协议
+    public String upload() {
+        FileUrl fileUrl = fileStorage.upload(inputStream, fullFileName);
+        return fileUrl.getOssUrl();
+    }
+```
+
+### 开源共建
+
+#### 开源协议
 
 file-storage 开源软件遵循 [Apache 2.0 协议](https://www.apache.org/licenses/LICENSE-2.0.html)。
 允许商业使用，但务必保留类作者、Copyright 信息。
 
-### 其他说明
+#### 其他说明
 
 1. 联系作者 <a href="mailto:897665787@qq.com">897665787@qq.com</a>
