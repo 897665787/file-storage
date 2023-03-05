@@ -31,7 +31,38 @@ file-storage
 └── file-storage-boot-starter -- 整合springboot代码
 ```
 
-## 开源共建
+### 使用说明
+
+#### 1：编译源码
+mvn install，使用maven将源码编译成jar包并且安装到本地仓库，如有私服也可以部署到私服
+
+#### 2：jar包引用（如使用阿里云OSS），其他可参考file-storage-core的pom配置
+
+```
+<dependency>
+    <groupId>com.jqdi</groupId>
+    <artifactId>file-storage-spring-boot-starter</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>com.aliyun.oss</groupId>
+    <artifactId>aliyun-sdk-oss</artifactId>
+    <version>3.15.1</version>
+</dependency>
+```
+#### 3：springboot yml 配置（如使用阿里云OSS），其他可参考file-storage-springboot-demo的pom配置
+```
+filestorage:
+  active: alioss
+  alioss:
+    endpoint: oss-cn-shenzhen.aliyuncs.com
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    bucketName: buket-template
+    domain: https://image.domain.com
+```
+## 
+开源共建
 
 ### 开源协议
 
