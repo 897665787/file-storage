@@ -29,6 +29,7 @@ file-storage
 	 └── tencentcos -- 腾讯云COS
 	 └── wangyinos -- 网易NOS
 └── file-storage-boot-starter -- 整合springboot代码
+└── file-storage-springboot-demo -- 在springboot中使用file-storage的demo代码
 ```
 
 ### 使用说明
