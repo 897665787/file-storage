@@ -15,7 +15,6 @@ public interface FileStorage {
 	/**
 	 * 下载文件流
 	 * 
-	 * @param inputStream
 	 * @param fileName
 	 * @return
 	 */
@@ -24,7 +23,6 @@ public interface FileStorage {
 	/**
 	 * 删除文件
 	 * 
-	 * @param inputStream
 	 * @param fileName
 	 * @return
 	 */

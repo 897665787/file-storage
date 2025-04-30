@@ -88,12 +88,13 @@ public class FileStorageAutoConfiguration {
 	@ConditionalOnProperty(prefix = "filestorage", name = "active", havingValue = "amazons3")
 	FileStorage amazonS3FileStorage(AmazonS3Properties properties) {
 		String endpoint = properties.getEndpoint();
+		String region = properties.getRegion();
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
 		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new AmazonS3FileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new AmazonS3FileStorage(endpoint, region, accessKey, secretKey, bucketName, domain);
 		return fileStorage;
 	}
 

@@ -2,9 +2,11 @@ package com.jqdi.filestorage.core.minio;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.ObjectWriteResponse;
@@ -99,6 +101,22 @@ public class MinioClient {
 		}
 
 		return url;
+	}
+
+	public String presignedUrl(String bucketName, String objectName) {
+		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder().method(Method.GET)
+				.bucket(bucketName).object(objectName).build();
+		try {
+			String presignedObjectUrl = client.getPresignedObjectUrl(getPresignedObjectUrlArgs);
+			log.info("presignedObjectUrl:{}", presignedObjectUrl);
+			return presignedObjectUrl;
+		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
+				 | InternalException | InvalidBucketNameException | InvalidExpiresRangeException
+				 | InvalidResponseException | NoSuchAlgorithmException | XmlParserException | ServerException
+				 | IOException e) {
+			log.error("minioClient.getPresignedObjectUrl error", e);
+		}
+		return null;
 	}
 
 	public InputStream getObject(String bucketName, String objectName) {

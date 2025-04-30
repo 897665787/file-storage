@@ -8,6 +8,7 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "filestorage.amazons3")
 public class AmazonS3Properties {
 	private String endpoint;
+	private String region;
 	private String accessKey;
 	private String secretKey;
 	private String bucketName;

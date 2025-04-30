@@ -17,9 +17,9 @@ public class AmazonS3FileStorage implements FileStorage {
 	private AmazonS3Client ossClient = null;
 	private String bucketName = null;
 	private String domain = null;
-	
-	public AmazonS3FileStorage(String endpoint, String accessKey, String secretKey, String bucketName, String domain) {
-		this.ossClient = new AmazonS3Client(endpoint, accessKey, secretKey);
+
+	public AmazonS3FileStorage(String endpoint, String region, String accessKey, String secretKey, String bucketName, String domain) {
+		this.ossClient = new AmazonS3Client(endpoint, region, accessKey, secretKey);
 		this.bucketName = bucketName;
 		this.domain = domain;
 	}
