@@ -60,8 +60,8 @@ public class JingdongossClient {
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiration) {
-		URL URL = client.generatePresignedUrl(bucketName, key, expiration);
-		String presignedUrl = URL.toString();
+		URL url = client.generatePresignedUrl(bucketName, key, expiration);
+		String presignedUrl = url.toString();
 		log.info("presignedUrl:{}", presignedUrl);
 		return presignedUrl;
 	}

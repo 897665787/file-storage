@@ -49,8 +49,8 @@ public class BaiduBosClient {
 	}
 
 	public String presignedUrl(String bucketName, String key, int expirationInSeconds) {
-		URL URL = client.generatePresignedUrl(bucketName, key, expirationInSeconds);
-		String presignedUrl = URL.toString();
+		URL url = client.generatePresignedUrl(bucketName, key, expirationInSeconds);
+		String presignedUrl = url.toString();
 		log.info("presignedUrl:{}", presignedUrl);
 		return presignedUrl;
 	}
