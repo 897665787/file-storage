@@ -1,15 +1,13 @@
 package com.jqdi.filestorage.core.huaweiobs;
 
-import java.io.InputStream;
-
 import com.obs.services.ObsClient;
-import com.obs.services.model.GetObjectRequest;
-import com.obs.services.model.ObjectMetadata;
-import com.obs.services.model.ObsObject;
-import com.obs.services.model.PutObjectRequest;
-import com.obs.services.model.PutObjectResult;
-
+import com.obs.services.model.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * 华为云OBS客户端
@@ -43,6 +41,12 @@ public class HuaweiObsClient {
 		
 		log.info("eTag:{},versionId:{},requestId:{},url:{}", eTag, versionId, requestId, url);
 		return url;
+	}
+
+	public String presignedUrl(String bucketName, String key, Date expiryTime) {
+		String presignedUrl = client.createSignedUrl(HttpMethodEnum.GET, bucketName, key, SpecialParamEnum.LOCATION, expiryTime, new HashMap<>(), new HashMap<>());
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {

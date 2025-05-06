@@ -1,11 +1,13 @@
 package com.jqdi.filestorage.core.baidubos;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.jqdi.filestorage.core.FileStorage;
 import com.jqdi.filestorage.core.FileUrl;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 百度BOS
@@ -36,6 +38,11 @@ public class BaiduBosFileStorage implements FileStorage {
 			fileUrl.setDomainUrl(ossUrl);
 		}
 		return fileUrl;
+	}
+
+	@Override
+	public String presignedUrl(String fileName) {
+		return ossClient.presignedUrl(bucketName, fileName, 3600);
 	}
 
 	@Override

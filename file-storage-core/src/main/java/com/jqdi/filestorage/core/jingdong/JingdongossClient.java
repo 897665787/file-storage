@@ -2,6 +2,7 @@ package com.jqdi.filestorage.core.jingdong;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Date;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -16,6 +17,7 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 京东云客户端
@@ -55,6 +57,13 @@ public class JingdongossClient {
 		String url = URL.toString();
 		log.info("url:{}", url);
 		return url;
+	}
+
+	public String presignedUrl(String bucketName, String key, Date expiration) {
+		URL URL = client.generatePresignedUrl(bucketName, key, expiration);
+		String presignedUrl = URL.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {

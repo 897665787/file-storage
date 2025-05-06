@@ -1,9 +1,5 @@
 package com.jqdi.filestorage.core.alioss;
 
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Optional;
-
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.common.auth.CredentialsProvider;
@@ -14,8 +10,13 @@ import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import com.aliyun.oss.model.VoidResult;
-
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 阿里云OSS客户端
@@ -64,9 +65,16 @@ public class AliossClient {
 		return url;
 	}
 
+	public String presignedUrl(String bucketName, String key, Date expiration) {
+		URL URL = client.generatePresignedUrl(bucketName, key, expiration);
+		String presignedUrl = URL.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
+	}
+
 	public InputStream getObject(String bucketName, String key) {
 		OSSObject ossObject = client.getObject(bucketName, key);
-		
+
 		String requestId = ossObject.getRequestId();
 		Long clientCRC = ossObject.getClientCRC();
 		Long serverCRC = ossObject.getServerCRC();
@@ -76,7 +84,7 @@ public class AliossClient {
 		Map<String, String> headers = response.getHeaders();
 		log.info("bucketName:{},key:{},requestId:{},clientCRC:{},serverCRC:{},uri:{},headers:{}",
 				ossObject.getBucketName(), ossObject.getKey(), requestId, clientCRC, serverCRC, uri, headers);
-		
+
 		InputStream inputStream = ossObject.getObjectContent();
 		return inputStream;
 	}

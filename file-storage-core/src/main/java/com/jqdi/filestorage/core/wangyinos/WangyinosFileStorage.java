@@ -1,11 +1,13 @@
 package com.jqdi.filestorage.core.wangyinos;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.jqdi.filestorage.core.FileStorage;
 import com.jqdi.filestorage.core.FileUrl;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 网易NOS
@@ -36,6 +38,12 @@ public class WangyinosFileStorage implements FileStorage {
 			fileUrl.setDomainUrl(ossUrl);
 		}
 		return fileUrl;
+	}
+
+	@Override
+	public String presignedUrl(String fileName) {
+		Date expiration = DateUtils.addSeconds(new Date(), 3600);
+		return client.presignedUrl(bucketName, fileName, expiration);
 	}
 
 	@Override

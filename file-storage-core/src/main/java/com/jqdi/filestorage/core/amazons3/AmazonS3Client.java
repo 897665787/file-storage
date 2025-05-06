@@ -8,11 +8,12 @@ import com.amazonaws.event.ProgressEventType;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
-import lombok.extern.slf4j.Slf4j;
 import com.jqdi.filestorage.core.util.Utils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Date;
 
 /**
  * 亚马逊AWS S3客户端
@@ -74,17 +75,15 @@ public class AmazonS3Client {
 		return null;
 	}
 
-	public String presignedUrl(String bucketName, String key) {
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, key);
-		URL URL = client.generatePresignedUrl(generatePresignedUrlRequest);
+	public String presignedUrl(String bucketName, String key, Date expiration) {
+		URL URL = client.generatePresignedUrl(bucketName, key, expiration);
 		String presignedUrl = URL.toString();
 		log.info("presignedUrl:{}", presignedUrl);
 		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {
-		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
-		S3Object s3Object = client.getObject(getObjectRequest);
+		S3Object s3Object = client.getObject(bucketName, key);
 		log.info("bucketName:{},key:{}", s3Object.getBucketName(), s3Object.getKey());
 
 		InputStream inputStream = s3Object.getObjectContent();

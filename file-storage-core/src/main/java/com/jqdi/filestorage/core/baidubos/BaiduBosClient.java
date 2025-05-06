@@ -1,19 +1,15 @@
 package com.jqdi.filestorage.core.baidubos;
 
-import java.io.InputStream;
-
 import com.baidubce.Protocol;
 import com.baidubce.auth.DefaultBceCredentials;
 import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.BosClientConfiguration;
 import com.baidubce.services.bos.BosObjectInputStream;
-import com.baidubce.services.bos.model.BosObject;
-import com.baidubce.services.bos.model.GetObjectRequest;
-import com.baidubce.services.bos.model.ObjectMetadata;
-import com.baidubce.services.bos.model.PutObjectRequest;
-import com.baidubce.services.bos.model.PutObjectResponse;
-
+import com.baidubce.services.bos.model.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * 百度BOS客户端
@@ -50,6 +46,13 @@ public class BaiduBosClient {
 		log.info("url:{}", url);
 		
 		return url;
+	}
+
+	public String presignedUrl(String bucketName, String key, int expirationInSeconds) {
+		URL URL = client.generatePresignedUrl(bucketName, key, expirationInSeconds);
+		String presignedUrl = URL.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {

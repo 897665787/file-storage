@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import io.minio.GetObjectArgs;
@@ -23,6 +25,8 @@ import io.minio.errors.XmlParserException;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Headers;
+import org.apache.commons.lang3.time.DateUtils;
+
 /**
  * minio客户端
  * 
@@ -103,9 +107,12 @@ public class MinioClient {
 		return url;
 	}
 
-	public String presignedUrl(String bucketName, String objectName) {
-		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder().method(Method.GET)
-				.bucket(bucketName).object(objectName).build();
+	public String presignedUrl(String bucketName, String objectName, int expirationInSeconds) {
+		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder()
+				.method(Method.GET)
+				.bucket(bucketName).object(objectName)
+				.expiry(expirationInSeconds, TimeUnit.SECONDS)
+				.build();
 		try {
 			String presignedObjectUrl = client.getPresignedObjectUrl(getPresignedObjectUrlArgs);
 			log.info("presignedObjectUrl:{}", presignedObjectUrl);

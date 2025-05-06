@@ -1,7 +1,5 @@
 package com.jqdi.filestorage.core.wangyinos;
 
-import java.io.InputStream;
-
 import com.netease.cloud.auth.BasicCredentials;
 import com.netease.cloud.auth.Credentials;
 import com.netease.cloud.services.nos.NosClient;
@@ -9,8 +7,11 @@ import com.netease.cloud.services.nos.model.NOSObject;
 import com.netease.cloud.services.nos.model.NOSObjectInputStream;
 import com.netease.cloud.services.nos.model.PutObjectRequest;
 import com.netease.cloud.services.nos.model.PutObjectResult;
-
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 
 /**
  * 网易NOS客户端
@@ -48,6 +49,13 @@ public class WangyinosClient {
 		String url = String.format("https://%s.%s/%s", bucketName, endpoint, key);
 		log.info("url:{}", url);
 		return url;
+	}
+
+	public String presignedUrl(String bucketName, String key, Date expiration) {
+		URL URL = client.generatePresignedUrl(bucketName, key, expiration);
+		String presignedUrl = URL.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {

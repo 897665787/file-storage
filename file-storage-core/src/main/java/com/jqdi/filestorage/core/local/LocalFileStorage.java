@@ -1,11 +1,13 @@
 package com.jqdi.filestorage.core.local;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.jqdi.filestorage.core.FileStorage;
 import com.jqdi.filestorage.core.FileUrl;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 本地磁盘
@@ -36,6 +38,11 @@ public class LocalFileStorage implements FileStorage {
 			fileUrl.setDomainUrl(ossUrl);
 		}
 		return fileUrl;
+	}
+
+	@Override
+	public String presignedUrl(String fileName) {
+		return client.presignedUrl(bucketName, fileName);
 	}
 
 	@Override

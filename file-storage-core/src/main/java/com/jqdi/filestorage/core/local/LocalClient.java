@@ -3,11 +3,14 @@ package com.jqdi.filestorage.core.local;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 本地磁盘客户端
@@ -33,6 +36,12 @@ public class LocalClient {
 		String url = resultFile.getAbsolutePath();
 		log.info("url:{}", url);
 		return url;
+	}
+
+	public String presignedUrl(String bucketName, String key) {
+		String presignedUrl = endpoint + File.separator + bucketName + File.separator + key;
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	@SneakyThrows
