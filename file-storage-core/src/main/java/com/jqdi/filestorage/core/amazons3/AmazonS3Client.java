@@ -28,7 +28,7 @@ public class AmazonS3Client {
 	public AmazonS3Client(String endpoint, String region, String accessKey, String secretKey) {
 		AmazonS3ClientBuilder builder = com.amazonaws.services.s3.AmazonS3Client.builder()
 				.withAccelerateModeEnabled(false)//加速模式
-				.withPathStyleAccessEnabled(true) // 禁用路径样式访问
+				.withPathStyleAccessEnabled(true) // 路径样式访问
 //				.disableChunkedEncoding()
 				.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region))
 				.withClientConfiguration(new ClientConfiguration().withMaxConnections(100))
@@ -39,7 +39,6 @@ public class AmazonS3Client {
 	public String putObject(String bucketName, String key, InputStream input) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentType(Utils.guessContentType(key));
-		new PutObjectRequest(bucketName, key, input, metadata);
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, metadata);
 
 		putObjectRequest.setGeneralProgressListener(progressEvent -> {
