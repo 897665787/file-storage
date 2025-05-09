@@ -4,7 +4,27 @@ server:
 spring:
   application:
     name: springbootdemo
-    
+
+aws:
+  region: cn-north-1
+  bucket:
+    name: s3-cn-test
+  access:
+    key: 333
+  secret:
+    key: 333
+  sts:
+    role:
+      arn: arn:aws-cn:iam::2222:role/s3-test-role
+    # aa
+    roleArn: arn:aws-cn:iam::22222:role/s3-test-role
+    sessionName: s3-upload-session
+  # aa
+  accessKeyId: 111
+  secretKey: 111
+  s3:
+    bucket: s3-cn-test
+
 filestorage:
   active: local
   local:

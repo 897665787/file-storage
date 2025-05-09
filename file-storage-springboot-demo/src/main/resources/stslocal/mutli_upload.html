@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AWS S3 分片上传 Demo</title>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1040.0.min.js"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+		.progress-container {
+			margin-top: 20px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			padding: 10px;
+		}
+		.progress-bar {
+			height: 20px;
+			background-color: #f5f5f5;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			overflow: hidden;
+		}
+		.progress {
+			height: 100%;
+			background-color: #5cb85c;
+			width: 0%;
+			transition: width 0.3s;
+		}
+		.upload-info {
+			margin-bottom: 10px;
+		}
+		button {
+			padding: 10px 15px;
+			background-color: #337ab7;
+			color: white;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+		button:disabled {
+			background-color: #cccccc;
+		}
+	</style>
+</head>
+<body>
+<h1>AWS S3 分片上传 Demo</h1>
+
+<input type="file" id="file-input" />
+<button id="upload-btn">开始上传</button>
+<button id="pause-btn" disabled>暂停</button>
+<button id="resume-btn" disabled>恢复上传</button>
+
+<div class="progress-container" id="progress-container" style="display: none;">
+	<div class="upload-info">
+		文件名: <span id="file-name"></span>
+	</div>
+	<div class="upload-info">
+		进度: <span id="progress-text">0%</span>
+	</div>
+	<div class="progress-bar">
+		<div class="progress" id="progress-bar"></div>
+	</div>
+</div>
+
+<script src="upload.js"></script>
+</body>
+</html>

@@ -44,6 +44,8 @@ public class Utils {
                 return "application/zip";
             case "rar":
                 return "application/x-rar-compressed";
+            case "mp4":
+                return "video/mp4";
             default:
                 return "application/octet-stream";
         }

@@ -92,6 +92,11 @@
 			<version>1.12.782</version>
             <scope>provided</scope>
         </dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-sts</artifactId>
+			<version>1.12.782</version>
+		</dependency>
         <!-- 网易数帆 -->
         <dependency>
             <groupId>com.netease.cloud</groupId>

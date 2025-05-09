@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AWS S3 分片上传演示</title>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1046.0.min.js"></script>
+	<style>
+		#progressBar {
+			width: 100%;
+			margin-top: 10px;
+		}
+		.upload-section {
+			margin: 20px;
+			padding: 20px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+<div class="upload-section">
+	<h1>AWS S3 分片上传</h1>
+	<input type="file" id="fileInput" />
+	<button onclick="startUpload()">开始上传</button>
+	<div>
+		<progress id="progressBar" value="0" max="100"></progress>
+		<span id="percentage">0%</span>
+	</div>
+	<div id="status">准备上传...</div>
+	<div id="uploadDetails" style="margin-top: 20px;"></div>
+</div>
+
+<script src="upload.js"></script>
+</body>
+</html>
