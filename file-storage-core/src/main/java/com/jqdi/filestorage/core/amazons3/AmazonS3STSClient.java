@@ -1,13 +1,14 @@
 package com.jqdi.filestorage.core.amazons3;
 
-import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.auth.STSAssumeRoleSessionCredentialsProvider;
 import com.amazonaws.event.ProgressEventType;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.jqdi.filestorage.core.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,22 +19,31 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 亚马逊AWS S3客户端
- *
+ * 亚马逊AWS S3客户端(STS模式)
+ * 
  * @author JQ棣
  *
  */
 @Slf4j
-public class AmazonS3Client {
+public class AmazonS3STSClient {
 
-	private AmazonS3 client = null;
+	private final AmazonS3 client;
 
-	public AmazonS3Client(String endpoint, String region, String accessKey, String secretKey) {
+	public AmazonS3STSClient(String region, String accessKey, String secretKey, String roleArn, String roleSessionName) {
+
+        AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+				.withRegion(region)
+				.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
+				.build();
+
+		STSAssumeRoleSessionCredentialsProvider credentialsProvider = new STSAssumeRoleSessionCredentialsProvider.Builder(roleArn, roleSessionName)
+				.withStsClient(stsClient)
+				.build();
+
 		AmazonS3ClientBuilder builder = com.amazonaws.services.s3.AmazonS3Client.builder()
 //				.withPathStyleAccessEnabled(true) // 路径样式访问
-				.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region))
-				.withClientConfiguration(new ClientConfiguration().withMaxConnections(100))
-				.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)));
+				.withCredentials(credentialsProvider)
+				.withRegion(region);
 		client = builder.build();
 	}
 
@@ -51,9 +61,9 @@ public class AmazonS3Client {
 		PutObjectResult putObjectResult = client.putObject(putObjectRequest);
 		String eTag = putObjectResult.getETag();
 		String versionId = putObjectResult.getVersionId();
-		
+
 		log.info("eTag:{},versionId:{}", eTag, versionId);
-		
+
 		URL URL = client.getUrl(bucketName, key);
 		String url = URL.toString();
 		log.info("url:{}", url);

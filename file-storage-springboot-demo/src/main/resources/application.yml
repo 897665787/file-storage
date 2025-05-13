@@ -55,6 +55,13 @@ filestorage:
     secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
     bucketName: buket-template
     domain: # 访问域名，未配置域名会默认使用oss的url
+  amazons3sts:
+    accessKey: LTAIkcl2bVhsEpGf
+    secretKey: D9hwgRig2IKQ6rIE4PBUglmKsqTpUm
+    roleArn: arn:aws-cn:iam::111111111111111:role/s3-cn-role
+    roleSessionName: test-session
+    bucketName: buket-template
+    domain: # 访问域名，未配置域名会默认使用oss的url
   baidubos:
     endpoint: xxx.baidu.com
     accessKey: LTAIkcl2bVhsEpGf

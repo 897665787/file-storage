@@ -1,14 +1,9 @@
 package com.jqdi.filestorage.spring.boot.starter;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.jqdi.filestorage.core.FileStorage;
 import com.jqdi.filestorage.core.alioss.AliossFileStorage;
 import com.jqdi.filestorage.core.amazons3.AmazonS3FileStorage;
+import com.jqdi.filestorage.core.amazons3.AmazonS3STSFileStorage;
 import com.jqdi.filestorage.core.baidubos.BaiduBosFileStorage;
 import com.jqdi.filestorage.core.huaweiobs.HuaweiObsFileStorage;
 import com.jqdi.filestorage.core.jingdong.JingdongossFileStorage;
@@ -16,22 +11,19 @@ import com.jqdi.filestorage.core.local.LocalFileStorage;
 import com.jqdi.filestorage.core.minio.MinioFileStorage;
 import com.jqdi.filestorage.core.tencentcos.TencentcosFileStorage;
 import com.jqdi.filestorage.core.wangyinos.WangyinosFileStorage;
-import com.jqdi.filestorage.spring.boot.starter.properties.AliossProperties;
-import com.jqdi.filestorage.spring.boot.starter.properties.AmazonS3Properties;
-import com.jqdi.filestorage.spring.boot.starter.properties.BaiduBosProperties;
-import com.jqdi.filestorage.spring.boot.starter.properties.HuaweiObsProperties;
-import com.jqdi.filestorage.spring.boot.starter.properties.JingdongossProperties;
-import com.jqdi.filestorage.spring.boot.starter.properties.LocalProperties;
-import com.jqdi.filestorage.spring.boot.starter.properties.MinioProperties;
-import com.jqdi.filestorage.spring.boot.starter.properties.TencentcosProperties;
-import com.jqdi.filestorage.spring.boot.starter.properties.WangyinosProperties;
+import com.jqdi.filestorage.spring.boot.starter.properties.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnProperty(prefix = "filestorage", name = "active")
 @ConditionalOnMissingBean(FileStorage.class)
 @EnableConfigurationProperties({ LocalProperties.class, MinioProperties.class, AliossProperties.class,
-		TencentcosProperties.class, AmazonS3Properties.class, BaiduBosProperties.class, HuaweiObsProperties.class,
-		WangyinosProperties.class, JingdongossProperties.class })
+		TencentcosProperties.class, AmazonS3Properties.class, AmazonS3STSProperties.class, BaiduBosProperties.class,
+		HuaweiObsProperties.class, WangyinosProperties.class, JingdongossProperties.class})
 public class FileStorageAutoConfiguration {
 	
 	@Bean
@@ -95,6 +87,21 @@ public class FileStorageAutoConfiguration {
 		String domain = properties.getDomain();
 
 		FileStorage fileStorage = new AmazonS3FileStorage(endpoint, region, accessKey, secretKey, bucketName, domain);
+		return fileStorage;
+	}
+
+	@Bean
+	@ConditionalOnProperty(prefix = "filestorage", name = "active", havingValue = "amazons3sts")
+	FileStorage amazonS3FileStorage(AmazonS3STSProperties properties) {
+		String region = properties.getRegion();
+		String accessKey = properties.getAccessKey();
+		String secretKey = properties.getSecretKey();
+		String roleArn = properties.getRoleArn();
+		String roleSessionName = properties.getRoleSessionName();
+		String bucketName = properties.getBucketName();
+		String domain = properties.getDomain();
+
+		FileStorage fileStorage = new AmazonS3STSFileStorage(region, accessKey, secretKey, roleArn, roleSessionName, bucketName, domain);
 		return fileStorage;
 	}
 
