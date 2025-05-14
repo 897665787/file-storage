@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class AmazonS3STSClient {
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiration) {
-		URL url = client.generatePresignedUrl(bucketName, key, expiration);
+		URL url = client.generatePresignedUrl(bucketName, key, expiration);// 过期时间最长7天
 		String presignedUrl = url.toString();
 		log.info("presignedUrl:{}", presignedUrl);
 		return presignedUrl;
