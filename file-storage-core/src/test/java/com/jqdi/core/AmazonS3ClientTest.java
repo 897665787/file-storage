@@ -27,10 +27,8 @@ public class AmazonS3ClientTest {
 		String key = "image/111.jpg";
 
 		// 上传文件
-		File file = new File("/Users/anker/Downloads/" + key);
-		FileInputStream inputStream = FileUtils.openInputStream(file);
-		String url = ossClient.putObject(bucketName, key, inputStream);
-		System.out.println("url:" + url);
+		FileInputStream inputStream = FileUtils.openInputStream(new File("D:/111.jpg"));
+		ossClient.putObject(bucketName, key, inputStream);
 
 		// 预签名Url
 		Date expiration = DateUtils.addSeconds(new Date(), 60);

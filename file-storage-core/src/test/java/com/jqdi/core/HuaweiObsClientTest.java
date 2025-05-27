@@ -24,8 +24,7 @@ public class HuaweiObsClientTest {
 
 		// 上传文件
 		FileInputStream inputStream = FileUtils.openInputStream(new File("D:/111.jpg"));
-		String url = ossClient.putObject(bucketName, key, inputStream);
-		System.out.println("url:" + url);
+		ossClient.putObject(bucketName, key, inputStream);
 
 		// 下载文件
 		InputStream download = ossClient.getObject(bucketName, key);

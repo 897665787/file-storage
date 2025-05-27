@@ -42,7 +42,7 @@ public class MinioClient {
 		client = io.minio.MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
 	}
 
-	public String putObject(String bucketName, InputStream stream, String objectName) {
+	public void putObject(String bucketName, InputStream stream, String objectName) {
 		long objectSize = 0L;
 		try {
 			objectSize = stream.available();
@@ -81,30 +81,33 @@ public class MinioClient {
 			throw new RuntimeException(e.getMessage());
 		}
 
-		String url = null;
 		try {
 			String objectUrl = client.getObjectUrl(bucketName, objectName);
 			log.info("objectUrl:{}", objectUrl);
-			url = objectUrl;
 		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
 				| InternalException | InvalidBucketNameException | InvalidResponseException | NoSuchAlgorithmException
 				| ServerException | XmlParserException | IOException e) {
 			log.error("minioClient.getObjectUrl error", e);
 		}
-		
-		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder().method(Method.GET)
-				.bucket(bucketName).object(objectName).build();
+	}
+
+	public String presignedUrlPut(String bucketName, String objectName, int expirationInSeconds) {
+		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder()
+				.method(Method.PUT)
+				.bucket(bucketName).object(objectName)
+				.expiry(expirationInSeconds, TimeUnit.SECONDS)
+				.build();
 		try {
 			String presignedObjectUrl = client.getPresignedObjectUrl(getPresignedObjectUrlArgs);
 			log.info("presignedObjectUrl:{}", presignedObjectUrl);
+			return presignedObjectUrl;
 		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
-				| InternalException | InvalidBucketNameException | InvalidExpiresRangeException
-				| InvalidResponseException | NoSuchAlgorithmException | XmlParserException | ServerException
-				| IOException e) {
+				 | InternalException | InvalidBucketNameException | InvalidExpiresRangeException
+				 | InvalidResponseException | NoSuchAlgorithmException | XmlParserException | ServerException
+				 | IOException e) {
 			log.error("minioClient.getPresignedObjectUrl error", e);
 		}
-
-		return url;
+		return null;
 	}
 
 	public String presignedUrl(String bucketName, String objectName, int expirationInSeconds) {

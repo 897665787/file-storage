@@ -3,36 +3,43 @@ package com.jqdi.filestorage.core;
 import java.io.InputStream;
 
 public interface FileStorage {
-	/**
-	 * 上传文件
-	 * 
-	 * @param inputStream
-	 * @param fileName
-	 * @return
-	 */
-	FileUrl upload(InputStream inputStream, String fileName);
+    /**
+     * 上传文件
+     *
+     * @param inputStream
+     * @param fileKey
+     */
+    void upload(InputStream inputStream, String fileKey);
 
-	/**
-	 * 预览文件链接
-	 *
-	 * @param fileName
-	 * @return
-	 */
-	String presignedUrl(String fileName);
+    /**
+     * 预签名链接（上传文件）
+     *
+     * @param fileKey
+     * @return 预签名链接
+     */
+    String uploadPresignedUrl(String fileKey);
 
-	/**
-	 * 下载文件流
-	 * 
-	 * @param fileName
-	 * @return
-	 */
-	InputStream download(String fileName);
+    /**
+     * 预签名链接（下载）
+     *
+     * @param fileKey
+     * @return 预签名链接
+     */
+    String presignedUrl(String fileKey);
 
-	/**
-	 * 删除文件
-	 * 
-	 * @param fileName
-	 * @return
-	 */
-	void remove(String fileName);
+    /**
+     * 下载文件流
+     *
+     * @param fileKey
+     * @return
+     */
+    InputStream download(String fileKey);
+
+    /**
+     * 删除文件
+     *
+     * @param fileKey
+     * @return
+     */
+    void remove(String fileKey);
 }

@@ -25,9 +25,8 @@ public class AliossClientTest {
 		
 		// 上传文件
 		FileInputStream inputStream = FileUtils.openInputStream(new File("D:/111.jpg"));
-		String url = ossClient.putObject(bucketName, key, inputStream);
-		System.out.println("url:" + url);
-		System.out.println("略缩url:" + (url + "?x-oss-process=image/resize,m_lfit,h_60,w_60"));
+		ossClient.putObject(bucketName, key, inputStream);
+//		System.out.println("略缩url:" + (url + "?x-oss-process=image/resize,m_lfit,h_60,w_60"));
 		
 		// 下载文件
 		InputStream download = ossClient.getObject(bucketName, key);

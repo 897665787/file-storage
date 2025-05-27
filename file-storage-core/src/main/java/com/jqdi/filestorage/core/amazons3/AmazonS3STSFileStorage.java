@@ -1,8 +1,6 @@
 package com.jqdi.filestorage.core.amazons3;
 
 import com.jqdi.filestorage.core.FileStorage;
-import com.jqdi.filestorage.core.FileUrl;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.InputStream;
@@ -15,43 +13,38 @@ import java.util.Date;
  *
  */
 public class AmazonS3STSFileStorage implements FileStorage {
-	private AmazonS3STSClient ossClient = null;
+	private AmazonS3STSClient client = null;
 	private String bucketName = null;
-	private String domain = null;
 
-	public AmazonS3STSFileStorage(String region, String accessKey, String secretKey, String roleArn, String roleSessionName, String bucketName, String domain) {
-		this.ossClient = new AmazonS3STSClient(region, accessKey, secretKey, roleArn, roleSessionName);
+	public AmazonS3STSFileStorage(String region, String accessKey, String secretKey, String roleArn, String roleSessionName, String bucketName) {
+		this.client = new AmazonS3STSClient(region, accessKey, secretKey, roleArn, roleSessionName);
 		this.bucketName = bucketName;
-		this.domain = domain;
 	}
 
 	@Override
-	public FileUrl upload(InputStream inputStream, String fileName) {
-		String ossUrl = ossClient.putObject(bucketName, fileName, inputStream);
-		FileUrl fileUrl = new FileUrl();
-		fileUrl.setOssUrl(ossUrl);
-		if (StringUtils.isNotBlank(domain)) {
-			String domainUrl = String.format("%s/%s", domain, fileName);
-			fileUrl.setDomainUrl(domainUrl);
-		} else {
-			fileUrl.setDomainUrl(ossUrl);
-		}
-		return fileUrl;
+	public void upload(InputStream inputStream, String fileKey) {
+		client.putObject(bucketName, fileKey, inputStream);
 	}
 
 	@Override
-	public String presignedUrl(String fileName) {
+	public String uploadPresignedUrl(String fileKey) {
 		Date expiration = DateUtils.addSeconds(new Date(), 3600);
-		return ossClient.presignedUrl(bucketName, fileName, expiration);
+		return client.presignedUrlPut(bucketName, fileKey, expiration);
 	}
 
 	@Override
-	public InputStream download(String fileName) {
-		return ossClient.getObject(bucketName, fileName);
+	public String presignedUrl(String fileKey) {
+		Date expiration = DateUtils.addSeconds(new Date(), 3600);
+		return client.presignedUrl(bucketName, fileKey, expiration);
 	}
 
 	@Override
-	public void remove(String fileName) {
-		ossClient.deleteObject(bucketName, fileName);
+	public InputStream download(String fileKey) {
+		return client.getObject(bucketName, fileKey);
+	}
+
+	@Override
+	public void remove(String fileKey) {
+		client.deleteObject(bucketName, fileKey);
 	}
 }

@@ -1,10 +1,6 @@
 package com.jqdi.filestorage.springbootdemo.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.UUID;
-
+import com.jqdi.filestorage.core.FileStorage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.jqdi.filestorage.core.FileStorage;
-import com.jqdi.filestorage.core.FileUrl;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/file")
@@ -39,12 +37,12 @@ public class FileController {
 		}
 		
 		try (InputStream inputStream = file.getInputStream()) {
-			String fileName = generateFileName(file.getOriginalFilename());
-			String fullFileName = fullFileName("img", fileName);
+			String fileKey = generateFileKey(file.getOriginalFilename());
+			String fullFileKey = fullFileKey("img", fileKey);
 
-			FileUrl fileUrl = fileStorage.upload(inputStream, fullFileName);
+			fileStorage.upload(inputStream, fullFileKey);
 			
-			return fileUrl.getOssUrl();
+			return fileKey;
 		} catch (IOException e) {
 			log.error("IOException", e);
 			return e.getMessage();
@@ -52,7 +50,7 @@ public class FileController {
 	}
 	
 
-	private static String fullFileName(String basePath, String fileName) {
+	private static String fullFileKey(String basePath, String fileKey) {
 		if (basePath == null) {
 			basePath = "";
 		}
@@ -62,10 +60,10 @@ public class FileController {
 		if (StringUtils.isNotBlank(basePath) && !basePath.endsWith("/")) {
 			basePath = basePath + "/";
 		}
-		return basePath + fileName;
+		return basePath + fileKey;
 	}
 	
-	private static String generateFileName(String fileName) {
+	private static String generateFileKey(String fileName) {
 		// 生成文件名（目录+文件名，例如:basePath/202201/01/00033d9fea0b484eac1509567e87e61a.jpg）
 		Calendar now = Calendar.getInstance();
 		int year = now.get(Calendar.YEAR);

@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -37,7 +38,7 @@ public class JingdongossClient {
 		client = builder.build();
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
+	public void putObject(String bucketName, String key, InputStream input) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, metadata);
 
@@ -56,7 +57,13 @@ public class JingdongossClient {
 		URL URL = client.getUrl(bucketName, key);
 		String url = URL.toString();
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiration) {

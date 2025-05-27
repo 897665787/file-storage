@@ -9,5 +9,4 @@ import lombok.Data;
 public class LocalProperties {
 	private String endpoint;
 	private String bucketName;
-	private String domain;
 }

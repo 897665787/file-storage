@@ -1,5 +1,6 @@
 package com.jqdi.filestorage.core.wangyinos;
 
+import com.netease.cloud.HttpMethod;
 import com.netease.cloud.auth.BasicCredentials;
 import com.netease.cloud.auth.Credentials;
 import com.netease.cloud.services.nos.NosClient;
@@ -31,7 +32,7 @@ public class WangyinosClient {
 		this.endpoint = endpoint;
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
+	public void putObject(String bucketName, String key, InputStream input) {
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, null);
 
 		putObjectRequest.setProgressListener(progressEvent -> {
@@ -48,7 +49,13 @@ public class WangyinosClient {
 		// 文件URL的格式为https://BucketName.Endpoint/ObjectName
 		String url = String.format("https://%s.%s/%s", bucketName, endpoint, key);
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiration) {

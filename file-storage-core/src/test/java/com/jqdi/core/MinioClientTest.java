@@ -24,10 +24,8 @@ public class MinioClientTest {
 		
 		// 上传文件
 		FileInputStream inputStream = FileUtils.openInputStream(new File("D:/111.jpg"));
-		String url = ossClient.putObject(bucketName, inputStream, objectName);
-		System.out.println("url:" + url);
-		
-		
+		ossClient.putObject(bucketName, inputStream, objectName);
+
 		// 下载文件
 		InputStream download = ossClient.getObject(bucketName, objectName);
 		OutputStream out = new FileOutputStream(new File("D:/minio-download.jpg"));

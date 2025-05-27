@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Date;
-import java.util.List;
 
 public class AmazonS3STSClientTest {
 
@@ -28,10 +27,19 @@ public class AmazonS3STSClientTest {
         String key = "image/111.jpg";
 
         // 上传文件
-        File file = new File("/Users/anker/Downloads/" + key);
-        FileInputStream inputStream = FileUtils.openInputStream(file);
-        String url = ossClient.putObject(bucketName, key, inputStream);
-        System.out.println("url:" + url);
+        FileInputStream inputStream = FileUtils.openInputStream(new File("D:/111.jpg"));
+        ossClient.putObject(bucketName, key, inputStream);
+
+        // 前端上传文件
+//        Date expiration = DateUtils.addSeconds(new Date(), 600);
+//        String presignedUrl = ossClient.presignedUrlPut(bucketName, key, expiration);
+//        System.out.println("presignedUrl:" + presignedUrl);
+//
+//        String body = HttpRequest.put(presignedUrl)
+//                .body(FileUtil.readBytes(new File("D:/111.jpg")))
+//                .header("Content-Type", Utils.guessContentType(key)) // 根据实际文件类型设置
+//                .execute().body();
+//        System.out.println("body:" + body);
 
         // 预签名Url
         Date expiration = DateUtils.addSeconds(new Date(), 60);

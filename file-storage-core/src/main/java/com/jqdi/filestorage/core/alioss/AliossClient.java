@@ -1,5 +1,6 @@
 package com.jqdi.filestorage.core.alioss;
 
+import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.common.auth.CredentialsProvider;
@@ -36,8 +37,7 @@ public class AliossClient {
 		this.endpoint = endpoint;
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
-
+	public void putObject(String bucketName, String key, InputStream input) {
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input);
 		
 		putObjectRequest.setProgressListener(progressEvent -> {
@@ -45,7 +45,7 @@ public class AliossClient {
 			ProgressEventType eventType = progressEvent.getEventType();
 			log.info("bytes:{},eventType:{}", bytes, eventType);
 		});
-		
+
 		PutObjectResult putObjectResult = client.putObject(putObjectRequest);
 		String eTag = putObjectResult.getETag();
 		String versionId = putObjectResult.getVersionId();
@@ -62,7 +62,13 @@ public class AliossClient {
 		// 文件URL的格式为https://BucketName.Endpoint/ObjectName
 		String url = String.format("https://%s.%s/%s", bucketName, endpoint, key);
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);// 过期时间最长7天
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiration) {

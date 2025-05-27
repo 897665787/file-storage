@@ -1,13 +1,8 @@
 package com.jqdi.filestorage.core.local;
 
-import java.io.InputStream;
-import java.util.Date;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.jqdi.filestorage.core.FileStorage;
-import com.jqdi.filestorage.core.FileUrl;
-import org.apache.commons.lang3.time.DateUtils;
+
+import java.io.InputStream;
 
 /**
  * 本地磁盘
@@ -18,40 +13,34 @@ import org.apache.commons.lang3.time.DateUtils;
 public class LocalFileStorage implements FileStorage {
 	private LocalClient client = null;
 	private String bucketName = null;
-	private String domain = null;
 
-	public LocalFileStorage(String endpoint, String bucketName, String domain) {
+	public LocalFileStorage(String endpoint, String bucketName) {
 		this.client = new LocalClient(endpoint);
 		this.bucketName = bucketName;
-		this.domain = domain;
 	}
 
 	@Override
-	public FileUrl upload(InputStream inputStream, String fileName) {
-		String ossUrl = client.putObject(bucketName, fileName, inputStream);
-		FileUrl fileUrl = new FileUrl();
-		fileUrl.setOssUrl(ossUrl);
-		if (StringUtils.isNotBlank(domain)) {
-			String domainUrl = String.format("%s/%s", domain, fileName);
-			fileUrl.setDomainUrl(domainUrl);
-		} else {
-			fileUrl.setDomainUrl(ossUrl);
-		}
-		return fileUrl;
+	public void upload(InputStream inputStream, String fileKey) {
+		client.putObject(bucketName, fileKey, inputStream);
 	}
 
 	@Override
-	public String presignedUrl(String fileName) {
-		return client.presignedUrl(bucketName, fileName);
+	public String uploadPresignedUrl(String fileKey) {
+		return client.presignedUrlPut(bucketName, fileKey);
 	}
 
 	@Override
-	public InputStream download(String fileName) {
-		return client.getObject(bucketName, fileName);
+	public String presignedUrl(String fileKey) {
+		return client.presignedUrl(bucketName, fileKey);
 	}
 
 	@Override
-	public void remove(String fileName) {
-		client.deleteObject(bucketName, fileName);
+	public InputStream download(String fileKey) {
+		return client.getObject(bucketName, fileKey);
+	}
+
+	@Override
+	public void remove(String fileKey) {
+		client.deleteObject(bucketName, fileKey);
 	}
 }

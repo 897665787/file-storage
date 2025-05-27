@@ -1,13 +1,10 @@
 package com.jqdi.filestorage.core.wangyinos;
 
+import com.jqdi.filestorage.core.FileStorage;
+import org.apache.commons.lang3.time.DateUtils;
+
 import java.io.InputStream;
 import java.util.Date;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.jqdi.filestorage.core.FileStorage;
-import com.jqdi.filestorage.core.FileUrl;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 网易NOS
@@ -18,41 +15,36 @@ import org.apache.commons.lang3.time.DateUtils;
 public class WangyinosFileStorage implements FileStorage {
 	private WangyinosClient client = null;
 	private String bucketName = null;
-	private String domain = null;
 
-	public WangyinosFileStorage(String endpoint, String accessKey, String secretKey, String bucketName, String domain) {
+	public WangyinosFileStorage(String endpoint, String accessKey, String secretKey, String bucketName) {
 		this.client = new WangyinosClient(endpoint, accessKey, secretKey);
 		this.bucketName = bucketName;
-		this.domain = domain;
 	}
 
 	@Override
-	public FileUrl upload(InputStream inputStream, String fileName) {
-		String ossUrl = client.putObject(bucketName, fileName, inputStream);
-		FileUrl fileUrl = new FileUrl();
-		fileUrl.setOssUrl(ossUrl);
-		if (StringUtils.isNotBlank(domain)) {
-			String domainUrl = String.format("%s/%s", domain, fileName);
-			fileUrl.setDomainUrl(domainUrl);
-		} else {
-			fileUrl.setDomainUrl(ossUrl);
-		}
-		return fileUrl;
+	public void upload(InputStream inputStream, String fileKey) {
+		client.putObject(bucketName, fileKey, inputStream);
 	}
 
 	@Override
-	public String presignedUrl(String fileName) {
+	public String uploadPresignedUrl(String fileKey) {
 		Date expiration = DateUtils.addSeconds(new Date(), 3600);
-		return client.presignedUrl(bucketName, fileName, expiration);
+		return client.presignedUrlPut(bucketName, fileKey, expiration);
 	}
 
 	@Override
-	public InputStream download(String fileName) {
-		return client.getObject(bucketName, fileName);
+	public String presignedUrl(String fileKey) {
+		Date expiration = DateUtils.addSeconds(new Date(), 3600);
+		return client.presignedUrl(bucketName, fileKey, expiration);
 	}
 
 	@Override
-	public void remove(String fileName) {
-		client.deleteObject(bucketName, fileName);
+	public InputStream download(String fileKey) {
+		return client.getObject(bucketName, fileKey);
+	}
+
+	@Override
+	public void remove(String fileKey) {
+		client.deleteObject(bucketName, fileKey);
 	}
 }

@@ -1,16 +1,12 @@
 package com.jqdi.filestorage.core.local;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.Date;
-
-import org.apache.commons.io.FileUtils;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 本地磁盘客户端
@@ -27,7 +23,7 @@ public class LocalClient {
 	}
 
 	@SneakyThrows
-	public String putObject(String bucketName, String key, InputStream input) {
+	public void putObject(String bucketName, String key, InputStream input) {
 		// bucketName->根目录
 		File resultFile = new File(endpoint + File.separator + bucketName + File.separator + key);
 		FileUtils.copyToFile(input, resultFile);
@@ -35,7 +31,10 @@ public class LocalClient {
 		// 文件URL的格式为endpoint/bucketName/key
 		String url = resultFile.getAbsolutePath();
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key) {
+		throw new UnsupportedOperationException("不支持该操作");
 	}
 
 	public String presignedUrl(String bucketName, String key) {

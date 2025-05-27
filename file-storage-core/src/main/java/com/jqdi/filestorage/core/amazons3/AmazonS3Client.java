@@ -1,21 +1,23 @@
 package com.jqdi.filestorage.core.amazons3;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.event.ProgressEventType;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.S3Object;
 import com.jqdi.filestorage.core.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 亚马逊AWS S3客户端
@@ -37,7 +39,7 @@ public class AmazonS3Client {
 		client = builder.build();
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
+	public void putObject(String bucketName, String key, InputStream input) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentType(Utils.guessContentType(key));
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, metadata);
@@ -57,7 +59,13 @@ public class AmazonS3Client {
 		URL URL = client.getUrl(bucketName, key);
 		String url = URL.toString();
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);// 过期时间最长7天
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiration) {

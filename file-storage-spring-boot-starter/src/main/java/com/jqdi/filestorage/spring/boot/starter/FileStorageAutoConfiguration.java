@@ -31,9 +31,8 @@ public class FileStorageAutoConfiguration {
 	FileStorage localFileStorage(LocalProperties properties) {
 		String endpoint = properties.getEndpoint();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new LocalFileStorage(endpoint, bucketName, domain);
+		FileStorage fileStorage = new LocalFileStorage(endpoint, bucketName);
 		return fileStorage;
 	}
 
@@ -44,9 +43,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new MinioFileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new MinioFileStorage(endpoint, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 
@@ -57,9 +55,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new AliossFileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new AliossFileStorage(endpoint, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 
@@ -70,9 +67,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new TencentcosFileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new TencentcosFileStorage(endpoint, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 
@@ -84,9 +80,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new AmazonS3FileStorage(endpoint, region, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new AmazonS3FileStorage(endpoint, region, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 
@@ -99,9 +94,8 @@ public class FileStorageAutoConfiguration {
 		String roleArn = properties.getRoleArn();
 		String roleSessionName = properties.getRoleSessionName();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new AmazonS3STSFileStorage(region, accessKey, secretKey, roleArn, roleSessionName, bucketName, domain);
+		FileStorage fileStorage = new AmazonS3STSFileStorage(region, accessKey, secretKey, roleArn, roleSessionName, bucketName);
 		return fileStorage;
 	}
 
@@ -112,9 +106,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new BaiduBosFileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new BaiduBosFileStorage(endpoint, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 
@@ -125,9 +118,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 
-		FileStorage fileStorage = new HuaweiObsFileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new HuaweiObsFileStorage(endpoint, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 	
@@ -138,9 +130,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 		
-		FileStorage fileStorage = new WangyinosFileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new WangyinosFileStorage(endpoint, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 	
@@ -151,9 +142,8 @@ public class FileStorageAutoConfiguration {
 		String accessKey = properties.getAccessKey();
 		String secretKey = properties.getSecretKey();
 		String bucketName = properties.getBucketName();
-		String domain = properties.getDomain();
 		
-		FileStorage fileStorage = new JingdongossFileStorage(endpoint, accessKey, secretKey, bucketName, domain);
+		FileStorage fileStorage = new JingdongossFileStorage(endpoint, accessKey, secretKey, bucketName);
 		return fileStorage;
 	}
 }

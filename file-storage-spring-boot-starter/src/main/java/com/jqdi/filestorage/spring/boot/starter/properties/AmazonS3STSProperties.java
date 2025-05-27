@@ -12,6 +12,5 @@ public class AmazonS3STSProperties {
 	private String roleArn;
 	private String roleSessionName;
 	private String bucketName;
-	private String domain;
 
 }

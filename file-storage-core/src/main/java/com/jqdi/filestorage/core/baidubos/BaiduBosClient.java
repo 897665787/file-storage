@@ -2,6 +2,7 @@ package com.jqdi.filestorage.core.baidubos;
 
 import com.baidubce.Protocol;
 import com.baidubce.auth.DefaultBceCredentials;
+import com.baidubce.http.HttpMethodName;
 import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.BosClientConfiguration;
 import com.baidubce.services.bos.BosObjectInputStream;
@@ -33,7 +34,7 @@ public class BaiduBosClient {
 		this.endpoint = endpoint;
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
+	public void putObject(String bucketName, String key, InputStream input) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, metadata);
 
@@ -44,8 +45,13 @@ public class BaiduBosClient {
 		// 文件URL的格式为https://BucketName.Endpoint/ObjectName
 		String url = String.format("https://%s.%s/%s", bucketName, endpoint, key);
 		log.info("url:{}", url);
-		
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, int expirationInSeconds) {
+		URL url = client.generatePresignedUrl(bucketName, key, expirationInSeconds, HttpMethodName.PUT);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public String presignedUrl(String bucketName, String key, int expirationInSeconds) {

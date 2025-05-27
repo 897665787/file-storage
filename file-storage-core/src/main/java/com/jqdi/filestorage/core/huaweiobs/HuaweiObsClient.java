@@ -24,7 +24,7 @@ public class HuaweiObsClient {
 		client = new ObsClient(accessKey, secretKey, endpoint);
 	}
 
-	public String putObject(String bucketName, String objectKey, InputStream input) {
+	public void putObject(String bucketName, String objectKey, InputStream input) {
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectKey, input);
 
 		putObjectRequest.setProgressListener(progressEvent -> {
@@ -40,7 +40,12 @@ public class HuaweiObsClient {
 		String url = putObjectResult.getObjectUrl();
 		
 		log.info("eTag:{},versionId:{},requestId:{},url:{}", eTag, versionId, requestId, url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiryTime) {
+		String presignedUrl = client.createSignedUrl(HttpMethodEnum.PUT, bucketName, key, SpecialParamEnum.LOCATION, expiryTime, new HashMap<>(), new HashMap<>());
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiryTime) {
