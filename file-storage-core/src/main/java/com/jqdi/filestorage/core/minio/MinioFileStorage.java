@@ -26,7 +26,7 @@ public class MinioFileStorage implements FileStorage {
 	}
 
 	@Override
-	public String uploadPresignedUrl(String fileKey) {
+	public String clientUpload(String fileKey) {
 		return client.presignedUrlPut(bucketName, fileKey, 3600);
 	}
 

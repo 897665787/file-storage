@@ -27,7 +27,7 @@ public class JingdongossFileStorage implements FileStorage {
 	}
 
 	@Override
-	public String uploadPresignedUrl(String fileKey) {
+	public String clientUpload(String fileKey) {
 		Date expiration = DateUtils.addSeconds(new Date(), 3600);
 		return client.presignedUrlPut(bucketName, fileKey, expiration);
 	}

@@ -6,18 +6,18 @@ public interface FileStorage {
     /**
      * 上传文件
      *
-     * @param inputStream
+     * @param inputStream 文件流
      * @param fileKey
      */
     void upload(InputStream inputStream, String fileKey);
 
     /**
-     * 预签名链接（上传文件）
+     * 上传文件（客户端）
      *
      * @param fileKey
      * @return 预签名链接
      */
-    String uploadPresignedUrl(String fileKey);
+    String clientUpload(String fileKey);
 
     /**
      * 预签名链接（下载）
@@ -28,10 +28,10 @@ public interface FileStorage {
     String presignedUrl(String fileKey);
 
     /**
-     * 下载文件流
+     * 下载文件
      *
      * @param fileKey
-     * @return
+     * @return 文件流
      */
     InputStream download(String fileKey);
 
@@ -39,7 +39,6 @@ public interface FileStorage {
      * 删除文件
      *
      * @param fileKey
-     * @return
      */
     void remove(String fileKey);
 }
