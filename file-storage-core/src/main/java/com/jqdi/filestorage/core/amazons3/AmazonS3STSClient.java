@@ -32,7 +32,6 @@ public class AmazonS3STSClient {
 	private final AmazonS3 client;
 
 	public AmazonS3STSClient(String region, String accessKey, String secretKey, String roleArn, String roleSessionName) {
-
         AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard()
 				.withRegion(region)
 				.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
