@@ -1,25 +1,25 @@
 package com.jqdi.filestorage.core.alioss;
 
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Optional;
-
+import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.common.auth.CredentialsProvider;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.common.comm.ResponseMessage;
 import com.aliyun.oss.event.ProgressEventType;
-import com.aliyun.oss.model.OSSObject;
-import com.aliyun.oss.model.PutObjectRequest;
-import com.aliyun.oss.model.PutObjectResult;
-import com.aliyun.oss.model.VoidResult;
-
+import com.aliyun.oss.model.*;
+import com.jqdi.filestorage.core.util.Utils;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 阿里云OSS客户端
- * 
+ *
  * @author JQ棣
  *
  */
@@ -35,38 +35,52 @@ public class AliossClient {
 		this.endpoint = endpoint;
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
+	public void putObject(String bucketName, String key, InputStream input) {
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentType(Utils.guessContentType(key));
+		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, metadata);
 
-		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input);
-		
 		putObjectRequest.setProgressListener(progressEvent -> {
 			long bytes = progressEvent.getBytes();
 			ProgressEventType eventType = progressEvent.getEventType();
 			log.info("bytes:{},eventType:{}", bytes, eventType);
 		});
-		
+
 		PutObjectResult putObjectResult = client.putObject(putObjectRequest);
 		String eTag = putObjectResult.getETag();
 		String versionId = putObjectResult.getVersionId();
 		String requestId = putObjectResult.getRequestId();
 		Long clientCRC = putObjectResult.getClientCRC();
 		Long serverCRC = putObjectResult.getServerCRC();
-		
+
 		String uri = Optional.ofNullable(putObjectResult.getResponse()).map(ResponseMessage::getUri).orElse(null);
 		Map<String, String> headers = Optional.ofNullable(putObjectResult.getResponse())
 				.map(ResponseMessage::getHeaders).orElse(null);
 		log.info("eTag:{},versionId:{},requestId:{},clientCRC:{},serverCRC:{},uri:{},headers:{}", eTag, versionId,
 				requestId, clientCRC, serverCRC, uri, headers);
-		
+
 		// 文件URL的格式为https://BucketName.Endpoint/ObjectName
 		String url = String.format("https://%s.%s/%s", bucketName, endpoint, key);
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);// 过期时间最长7天
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
+	}
+
+	public String presignedUrl(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {
 		OSSObject ossObject = client.getObject(bucketName, key);
-		
+
 		String requestId = ossObject.getRequestId();
 		Long clientCRC = ossObject.getClientCRC();
 		Long serverCRC = ossObject.getServerCRC();
@@ -76,14 +90,14 @@ public class AliossClient {
 		Map<String, String> headers = response.getHeaders();
 		log.info("bucketName:{},key:{},requestId:{},clientCRC:{},serverCRC:{},uri:{},headers:{}",
 				ossObject.getBucketName(), ossObject.getKey(), requestId, clientCRC, serverCRC, uri, headers);
-		
+
 		InputStream inputStream = ossObject.getObjectContent();
 		return inputStream;
 	}
 
 	public void deleteObject(String bucketName, String key) {
 		VoidResult voidResult = client.deleteObject(bucketName, key);
-		
+
 		String requestId = voidResult.getRequestId();
 		Long clientCRC = voidResult.getClientCRC();
 		Long serverCRC = voidResult.getServerCRC();

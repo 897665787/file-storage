@@ -1,11 +1,8 @@
 package com.jqdi.filestorage.core.minio;
 
-import java.io.InputStream;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.jqdi.filestorage.core.FileStorage;
-import com.jqdi.filestorage.core.FileUrl;
+
+import java.io.InputStream;
 
 /**
  * minio
@@ -15,37 +12,36 @@ import com.jqdi.filestorage.core.FileUrl;
  */
 public class MinioFileStorage implements FileStorage {
 
-	private MinioClient minioClient;
+	private MinioClient client;
 	private String bucketName;
-	private String domain;
 	
-	public MinioFileStorage(String endpoint, String accessKey, String secretKey, String bucketName, String domain) {
-		this.minioClient = new MinioClient(endpoint, accessKey, secretKey);
+	public MinioFileStorage(String endpoint, String accessKey, String secretKey, String bucketName) {
+		this.client = new MinioClient(endpoint, accessKey, secretKey);
 		this.bucketName = bucketName;
-		this.domain = domain;
 	}
 
 	@Override
-	public FileUrl upload(InputStream inputStream, String fileName) {
-		String ossUrl = minioClient.putObject(bucketName, inputStream, fileName);
-		FileUrl fileUrl = new FileUrl();
-		fileUrl.setOssUrl(ossUrl);
-		if (StringUtils.isNotBlank(domain)) {
-			String domainUrl = String.format("%s/%s", domain, fileName);
-			fileUrl.setDomainUrl(domainUrl);
-		} else {
-			fileUrl.setDomainUrl(ossUrl);
-		}
-		return fileUrl;
+	public void upload(InputStream inputStream, String fileKey) {
+		client.putObject(bucketName, inputStream, fileKey);
 	}
 
 	@Override
-	public InputStream download(String fileName) {
-		return minioClient.getObject(bucketName, fileName);
+	public String clientUpload(String fileKey) {
+		return client.presignedUrlPut(bucketName, fileKey, 3600);
 	}
 
 	@Override
-	public void remove(String fileName) {
-		minioClient.removeObject(bucketName, fileName);
+	public String presignedUrl(String fileKey) {
+		return client.presignedUrl(bucketName, fileKey, 3600);
+	}
+
+	@Override
+	public InputStream download(String fileKey) {
+		return client.getObject(bucketName, fileKey);
+	}
+
+	@Override
+	public void remove(String fileKey) {
+		client.removeObject(bucketName, fileKey);
 	}
 }

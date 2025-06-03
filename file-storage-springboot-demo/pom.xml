@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.jqdi</groupId>
 		<artifactId>file-storage</artifactId>
-		<version>1.0.0</version>
+		<version>2.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -14,7 +14,7 @@
 	<description>整合springboot demo代码</description>
 
 	<properties>
-		<spring-boot.version>2.0.5.RELEASE</spring-boot.version>
+		<spring-boot.version>2.7.18</spring-boot.version>
 	</properties>
 
 	<dependencies>
@@ -27,14 +27,13 @@
 		<dependency>
 			<groupId>com.jqdi</groupId>
 			<artifactId>file-storage-spring-boot-starter</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.0</version>
 		</dependency>
 		<!-- minio -->
 		<dependency>
 		    <groupId>io.minio</groupId>
 		    <artifactId>minio</artifactId>
-		    <version>7.1.4</version>
-			<!-- 8.0.x版本会报错：Unsupported OkHttp library found. Must use okhttp >= 4.8.1 -->
+		    <version>8.5.17</version>
 		</dependency>
 	</dependencies>
 	

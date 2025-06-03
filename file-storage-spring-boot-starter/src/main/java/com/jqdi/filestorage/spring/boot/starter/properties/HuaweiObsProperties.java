@@ -11,5 +11,4 @@ public class HuaweiObsProperties {
 	private String accessKey;
 	private String secretKey;
 	private String bucketName;
-	private String domain;
 }

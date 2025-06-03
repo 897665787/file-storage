@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.jqdi</groupId>
 		<artifactId>file-storage</artifactId>
-		<version>1.0.0</version>
+		<version>2.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
-			<version>2.0.5.RELEASE</version>
+			<version>2.7.18</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- spring-boot自动配置依赖 -->
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>com.jqdi</groupId>
 			<artifactId>file-storage-core</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.0</version>
 		</dependency>
 		<!-- 文件存储依赖 -->
 	</dependencies>

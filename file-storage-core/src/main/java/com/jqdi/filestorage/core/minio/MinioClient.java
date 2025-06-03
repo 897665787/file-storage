@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import com.jqdi.filestorage.core.util.Utils;
 
 import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
@@ -13,17 +18,16 @@ import io.minio.RemoveObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.InsufficientDataException;
 import io.minio.errors.InternalException;
-import io.minio.errors.InvalidBucketNameException;
-import io.minio.errors.InvalidExpiresRangeException;
 import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Headers;
+
 /**
  * minio客户端
- * 
+ *
  * @author JQ棣
  *
  */
@@ -36,7 +40,7 @@ public class MinioClient {
 		client = io.minio.MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
 	}
 
-	public String putObject(String bucketName, InputStream stream, String objectName) {
+	public void putObject(String bucketName, InputStream stream, String objectName) {
 		long objectSize = 0L;
 		try {
 			objectSize = stream.available();
@@ -44,8 +48,11 @@ public class MinioClient {
 			log.error("inputStream.available error", e);
 		}
 
+		Map<String, String> userMetadata = new HashMap<>();
+		userMetadata.put("Content-Type", Utils.guessContentType(objectName));
 		long partSize = -1L;
 		PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(bucketName).object(objectName)
+				.userMetadata(userMetadata)
 				// 文件大小objectSize、分片大小partSize，分片数我们传入的是-1，表示使用默认配置
 				/**
 				 * <pre>
@@ -69,36 +76,41 @@ public class MinioClient {
 			log.info("etag:{},versionId:{},headers:{},bucket:{},region:{},object:{}", etag, versionId,
 					headers.toString(), bucket, region, object);
 		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
-				| InternalException | InvalidBucketNameException | InvalidResponseException | NoSuchAlgorithmException
-				| ServerException | XmlParserException | IOException e) {
+				| InternalException | InvalidResponseException | NoSuchAlgorithmException | ServerException
+				| XmlParserException | IOException e) {
 			log.error("minioClient.putObject error", e);
 			throw new RuntimeException(e.getMessage());
 		}
+	}
 
-		String url = null;
-		try {
-			String objectUrl = client.getObjectUrl(bucketName, objectName);
-			log.info("objectUrl:{}", objectUrl);
-			url = objectUrl;
-		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
-				| InternalException | InvalidBucketNameException | InvalidResponseException | NoSuchAlgorithmException
-				| ServerException | XmlParserException | IOException e) {
-			log.error("minioClient.getObjectUrl error", e);
-		}
-		
-		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder().method(Method.GET)
-				.bucket(bucketName).object(objectName).build();
+	public String presignedUrlPut(String bucketName, String objectName, int expirationInSeconds) {
+		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder().method(Method.PUT)
+				.bucket(bucketName).object(objectName).expiry(expirationInSeconds, TimeUnit.SECONDS).build();
 		try {
 			String presignedObjectUrl = client.getPresignedObjectUrl(getPresignedObjectUrlArgs);
 			log.info("presignedObjectUrl:{}", presignedObjectUrl);
+			return presignedObjectUrl;
 		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
-				| InternalException | InvalidBucketNameException | InvalidExpiresRangeException
-				| InvalidResponseException | NoSuchAlgorithmException | XmlParserException | ServerException
-				| IOException e) {
+				| InternalException | InvalidResponseException | NoSuchAlgorithmException | XmlParserException
+				| ServerException | IOException e) {
 			log.error("minioClient.getPresignedObjectUrl error", e);
 		}
+		return null;
+	}
 
-		return url;
+	public String presignedUrl(String bucketName, String objectName, int expirationInSeconds) {
+		GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder().method(Method.GET)
+				.bucket(bucketName).object(objectName).expiry(expirationInSeconds, TimeUnit.SECONDS).build();
+		try {
+			String presignedObjectUrl = client.getPresignedObjectUrl(getPresignedObjectUrlArgs);
+			log.info("presignedObjectUrl:{}", presignedObjectUrl);
+			return presignedObjectUrl;
+		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
+				| InternalException | InvalidResponseException | NoSuchAlgorithmException | XmlParserException
+				| ServerException | IOException e) {
+			log.error("minioClient.getPresignedObjectUrl error", e);
+		}
+		return null;
 	}
 
 	public InputStream getObject(String bucketName, String objectName) {
@@ -108,8 +120,8 @@ public class MinioClient {
 		try {
 			inputStream = client.getObject(objectArgs);
 		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
-				| InternalException | InvalidBucketNameException | InvalidResponseException | NoSuchAlgorithmException
-				| ServerException | XmlParserException | IOException e) {
+				| InternalException | InvalidResponseException | NoSuchAlgorithmException | ServerException
+				| XmlParserException | IOException e) {
 			log.error("minioClient.getObject error", e);
 		}
 
@@ -121,8 +133,8 @@ public class MinioClient {
 		try {
 			client.removeObject(removeObjectArgs);
 		} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException
-				| InternalException | InvalidBucketNameException | InvalidResponseException | NoSuchAlgorithmException
-				| ServerException | XmlParserException | IOException e) {
+				| InternalException | InvalidResponseException | NoSuchAlgorithmException | ServerException
+				| XmlParserException | IOException e) {
 			log.error("minioClient.removeObject error", e);
 		}
 	}

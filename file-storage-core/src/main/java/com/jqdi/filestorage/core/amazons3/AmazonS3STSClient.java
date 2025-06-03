@@ -1,40 +1,50 @@
-package com.jqdi.filestorage.core.jingdong;
+package com.jqdi.filestorage.core.amazons3;
+
+import com.amazonaws.HttpMethod;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.STSAssumeRoleSessionCredentialsProvider;
+import com.amazonaws.event.ProgressEventType;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.jqdi.filestorage.core.util.Utils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
-import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.event.ProgressEventType;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
-
-import com.jqdi.filestorage.core.util.Utils;
-import lombok.extern.slf4j.Slf4j;
-
 /**
- * 京东云客户端
- *
+ * 亚马逊AWS S3客户端(STS模式)
+ * 
  * @author JQ棣
  *
  */
 @Slf4j
-public class JingdongossClient {
+public class AmazonS3STSClient {
 
-	private AmazonS3 client = null;
+	private final AmazonS3 client;
 
-	public JingdongossClient(String endpoint, String accessKey, String secretKey) {
-		AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
-				.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)));
-		builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, "CHINA-HK"));
+	public AmazonS3STSClient(String region, String accessKey, String secretKey, String roleArn, String roleSessionName) {
+        AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+				.withRegion(region)
+				.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
+				.build();
+
+		STSAssumeRoleSessionCredentialsProvider credentialsProvider = new STSAssumeRoleSessionCredentialsProvider.Builder(roleArn, roleSessionName)
+				.withStsClient(stsClient)
+				.build();
+
+		AmazonS3ClientBuilder builder = com.amazonaws.services.s3.AmazonS3Client.builder()
+//				.withPathStyleAccessEnabled(true) // 路径样式访问
+				.withCredentials(credentialsProvider)
+				.withRegion(region);
 		client = builder.build();
 	}
 
@@ -61,22 +71,21 @@ public class JingdongossClient {
 	}
 
 	public String presignedUrlPut(String bucketName, String key, Date expiration) {
-		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);// 过期时间最长7天
 		String presignedUrl = url.toString();
 		log.info("presignedUrl:{}", presignedUrl);
 		return presignedUrl;
 	}
 
 	public String presignedUrl(String bucketName, String key, Date expiration) {
-		URL url = client.generatePresignedUrl(bucketName, key, expiration);
+		URL url = client.generatePresignedUrl(bucketName, key, expiration);// 过期时间最长7天
 		String presignedUrl = url.toString();
 		log.info("presignedUrl:{}", presignedUrl);
 		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {
-		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
-		S3Object s3Object = client.getObject(getObjectRequest);
+		S3Object s3Object = client.getObject(bucketName, key);
 		log.info("bucketName:{},key:{}", s3Object.getBucketName(), s3Object.getKey());
 
 		InputStream inputStream = s3Object.getObjectContent();

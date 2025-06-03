@@ -1,19 +1,17 @@
 package com.jqdi.filestorage.core.huaweiobs;
 
-import java.io.InputStream;
-
+import com.jqdi.filestorage.core.util.Utils;
 import com.obs.services.ObsClient;
-import com.obs.services.model.GetObjectRequest;
-import com.obs.services.model.ObjectMetadata;
-import com.obs.services.model.ObsObject;
-import com.obs.services.model.PutObjectRequest;
-import com.obs.services.model.PutObjectResult;
-
+import com.obs.services.model.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * 华为云OBS客户端
- * 
+ *
  * @author JQ棣
  *
  */
@@ -26,8 +24,11 @@ public class HuaweiObsClient {
 		client = new ObsClient(accessKey, secretKey, endpoint);
 	}
 
-	public String putObject(String bucketName, String objectKey, InputStream input) {
+	public void putObject(String bucketName, String objectKey, InputStream input) {
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentType(Utils.guessContentType(objectKey));
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectKey, input);
+		putObjectRequest.setMetadata(metadata);
 
 		putObjectRequest.setProgressListener(progressEvent -> {
 			long bytes = progressEvent.getTotalBytes();
@@ -40,9 +41,20 @@ public class HuaweiObsClient {
 		String versionId = putObjectResult.getVersionId();
 		String requestId = putObjectResult.getRequestId();
 		String url = putObjectResult.getObjectUrl();
-		
+
 		log.info("eTag:{},versionId:{},requestId:{},url:{}", eTag, versionId, requestId, url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiryTime) {
+		String presignedUrl = client.createSignedUrl(HttpMethodEnum.PUT, bucketName, key, SpecialParamEnum.LOCATION, expiryTime, new HashMap<>(), new HashMap<>());
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
+	}
+
+	public String presignedUrl(String bucketName, String key, Date expiryTime) {
+		String presignedUrl = client.createSignedUrl(HttpMethodEnum.GET, bucketName, key, SpecialParamEnum.LOCATION, expiryTime, new HashMap<>(), new HashMap<>());
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {

@@ -1,4 +1,4 @@
-package com.jqdi.filestorage.core.wangyinos;
+package com.jqdi.filestorage.core.amazons3;
 
 import com.jqdi.filestorage.core.FileStorage;
 import org.apache.commons.lang3.time.DateUtils;
@@ -7,17 +7,17 @@ import java.io.InputStream;
 import java.util.Date;
 
 /**
- * 网易NOS
+ * 亚马逊AWS S3(STS模式)
  * 
  * @author JQ棣
  *
  */
-public class WangyinosFileStorage implements FileStorage {
-	private WangyinosClient client = null;
+public class AmazonS3STSFileStorage implements FileStorage {
+	private AmazonS3STSClient client = null;
 	private String bucketName = null;
 
-	public WangyinosFileStorage(String endpoint, String accessKey, String secretKey, String bucketName) {
-		this.client = new WangyinosClient(endpoint, accessKey, secretKey);
+	public AmazonS3STSFileStorage(String region, String accessKey, String secretKey, String roleArn, String roleSessionName, String bucketName) {
+		this.client = new AmazonS3STSClient(region, accessKey, secretKey, roleArn, roleSessionName);
 		this.bucketName = bucketName;
 	}
 

@@ -1,27 +1,24 @@
 package com.jqdi.filestorage.core.tencentcos;
 
-import java.io.InputStream;
-import java.net.URL;
-
+import com.jqdi.filestorage.core.util.Utils;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
 import com.qcloud.cos.endpoint.UserSpecifiedEndpointBuilder;
 import com.qcloud.cos.event.ProgressEventType;
-import com.qcloud.cos.model.COSObject;
-import com.qcloud.cos.model.COSObjectInputStream;
-import com.qcloud.cos.model.GetObjectRequest;
-import com.qcloud.cos.model.ObjectMetadata;
-import com.qcloud.cos.model.PutObjectRequest;
-import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.http.HttpMethodName;
+import com.qcloud.cos.model.*;
 import com.qcloud.cos.region.Region;
-
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 
 /**
  * 腾讯云COS客户端
- * 
+ *
  * @author JQ棣
  *
  */
@@ -41,8 +38,9 @@ public class TencentcosClient {
 		client = new COSClient(cred, clientConfig);
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
+	public void putObject(String bucketName, String key, InputStream input) {
 		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentType(Utils.guessContentType(key));
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, metadata);
 
 		putObjectRequest.setGeneralProgressListener(progressEvent -> {
@@ -61,7 +59,20 @@ public class TencentcosClient {
 		URL URL = client.getObjectUrl(bucketName, key);
 		String url = URL.toString();
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethodName.PUT);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
+	}
+
+	public String presignedUrl(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {

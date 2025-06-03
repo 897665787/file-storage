@@ -1,20 +1,20 @@
 package com.jqdi.filestorage.core.wangyinos;
 
-import java.io.InputStream;
-
+import com.jqdi.filestorage.core.util.Utils;
+import com.netease.cloud.HttpMethod;
 import com.netease.cloud.auth.BasicCredentials;
 import com.netease.cloud.auth.Credentials;
 import com.netease.cloud.services.nos.NosClient;
-import com.netease.cloud.services.nos.model.NOSObject;
-import com.netease.cloud.services.nos.model.NOSObjectInputStream;
-import com.netease.cloud.services.nos.model.PutObjectRequest;
-import com.netease.cloud.services.nos.model.PutObjectResult;
-
+import com.netease.cloud.services.nos.model.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 
 /**
  * 网易NOS客户端
- * 
+ *
  * @author JQ棣
  *
  */
@@ -30,15 +30,17 @@ public class WangyinosClient {
 		this.endpoint = endpoint;
 	}
 
-	public String putObject(String bucketName, String key, InputStream input) {
-		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, null);
+	public void putObject(String bucketName, String key, InputStream input) {
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentType(Utils.guessContentType(key));
+		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, input, metadata);
 
 		putObjectRequest.setProgressListener(progressEvent -> {
 			int bytes = progressEvent.getBytesTransfered();
 			int eventCode = progressEvent.getEventCode();
 			log.info("bytes:{},eventCode:{}", bytes, eventCode);
 		});
-		
+
 		PutObjectResult putObjectResult = client.putObject(putObjectRequest);
 		String eTag = putObjectResult.getETag();
 		String versionId = putObjectResult.getVersionId();
@@ -47,7 +49,20 @@ public class WangyinosClient {
 		// 文件URL的格式为https://BucketName.Endpoint/ObjectName
 		String url = String.format("https://%s.%s/%s", bucketName, endpoint, key);
 		log.info("url:{}", url);
-		return url;
+	}
+
+	public String presignedUrlPut(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
+	}
+
+	public String presignedUrl(String bucketName, String key, Date expiration) {
+		URL url = client.generatePresignedUrl(bucketName, key, expiration);
+		String presignedUrl = url.toString();
+		log.info("presignedUrl:{}", presignedUrl);
+		return presignedUrl;
 	}
 
 	public InputStream getObject(String bucketName, String key) {
